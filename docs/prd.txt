@@ -1,0 +1,499 @@
+# Product Requirements Document (PRD)
+
+## Smart Hotel Experience Platform  
+**Code Name:** *LuxStay Nexus*  
+**Version:** 1.0  
+**Date:** April 2026  
+**Author:** UX-Engineering Team  
+
+---
+
+## Executive Summary
+
+LuxStay Nexus is a **single‑property, luxury hotel booking platform** that merges accommodation, in‑room dining, and ambient personalisation into one seamless, emotionally intelligent booking journey. The product leverages **Supabase** as its primary backend (database, authentication, storage, real‑time) and **Next.js (App Router)** for a high‑performance, SSR‑optimised frontend. Every pixel and interaction is engineered for a **“glassmorphism + premium minimalism”** aesthetic with obsessive attention to mobile‑first responsiveness and micro‑interactions that convey trust and elegance.
+
+---
+
+## 1. Product Vision & Goals
+
+**Vision:**  
+To make booking a hotel room feel less like a transaction and more like designing a private sanctuary. Guests control not only their room type and meals, but also the sensory atmosphere (temperature, lighting, music, mood) – all through a single, visually stunning interface that the hotel staff can see and prepare in real time.
+
+**Business Goals:**
+
+- Increase direct bookings (no OTA commissions) by 35%
+- Boost ancillary revenue (food orders) by 25%
+- Reduce check‑in friction and staff preparation time by 40%
+- Achieve NPS > 70 through hyper‑personalisation
+
+**User Goals:**
+
+- Book a room in under 4 minutes on mobile
+- Enjoy a cohesive, luxury brand feel across all touchpoints
+- Personalise stay details once, and have them honoured automatically
+
+---
+
+## 2. Tech Stack (Revised with Supabase)
+
+| Layer            | Technology / Service                                         |
+| ---------------- | ------------------------------------------------------------ |
+| Frontend         | Next.js 14+ (App Router), Tailwind CSS, Framer Motion, Shadcn/ui primitives |
+| Backend          | Next.js API Routes + Server Actions (with Supabase client)   |
+| Database         | **Supabase (PostgreSQL)**                                    |
+| Auth             | **Supabase Auth** (Email/Password + Google OAuth)            |
+| File Storage     | **Supabase Storage** (room images, menu images, public bucket) |
+| Real‑time        | Supabase Realtime (admin dashboard instant updates)          |
+| Payment          | Stripe (Checkout Sessions + Webhooks)                        |
+| Notifications    | Resend (email) + Twilio (SMS fallback)                       |
+| Deployment       | Vercel (frontend) + Supabase Cloud (DB/Auth/Storage)          |
+| Monitoring       | Vercel Analytics + Supabase Logs                              |
+
+---
+
+## 3. User Personas
+
+**1. The Luxe Leisure Guest (Primary)**  
+- Mobile‑first, values aesthetics and speed  
+- Books romantic getaways or staycations  
+- Expects the digital experience to mirror the hotel’s physical luxury
+
+**2. The Business Traveller**  
+- Needs quick booking (frequent, short stays)  
+- Values room customisation for productivity (lighting, AC, music)  
+- Prefers scheduled in‑room dining
+
+**3. The Hotel Admin / Front Desk**  
+- Needs a clear dashboard to see upcoming bookings, preferences, and food orders  
+- Wants to update room readiness and food delivery statuses instantly  
+
+---
+
+## 4. Design System & UI/UX Strategy
+
+### 4.1. Brand Identity – “Glassmorphism Elegance”
+
+- **Color Palette:** Deep midnight blue (#0B1120) base, soft gold (#D4AF37) accents, pure white text, translucent overlays with `backdrop-blur-3xl bg-white/5`  
+- **Typography:**  
+  - Headings: Playfair Display (serif, elegant)  
+  - Body/CTAs: Inter (clean, modern)  
+- **Shapes:** Rounded-2xl cards, soft shadows (`shadow-2xl`), subtle border `border-white/10`  
+- **Animations:**  
+  - Page transitions: Framer Motion `AnimatePresence` with fade+slide  
+  - Buttons: `scale` on hover/tap, smooth colour transitions  
+  - Cards: 3D tilt on hover (using React‑Tilt)  
+- **Illustrations:** Minimal line‑art icons, custom Lottie animations for loading states
+
+### 4.2. Mobile‑First Approach (Non‑Negotiable)
+
+- All screens designed at 375px breakpoint first, then scaled up  
+- Booking form: stepper that collapses into a single‑screen carousel on mobile  
+- Thumb‑friendly touch targets (min 48px), bottom‑sheet menus for extra options  
+- Images lazy‑loaded with blurhash placeholders  
+- Offline‑friendly: PWA ready with service worker for essential pages
+
+### 4.3. Key UI Components (Design Specs)
+
+- **Hero Section:** Full‑bleed video background, overlaid glass card with check‑in/out widgets. On mobile, video replaced by a high‑quality static image for performance.  
+- **Room Cards:** Horizontal swipeable cards on mobile, grid on desktop. Each card reveals details on tap (expandable bottom sheet).  
+- **Multi‑Step Booking Flow:**  
+  - Step indicator (dots + labels) at top  
+  - Each step is a full‑screen panel with progress feedback  
+  - Smooth slide animation between steps  
+- **Food Menu:** Horizontal category pills, grid of items with crisp images, quantity stepper, “Add to Order” with haptic feedback on mobile  
+- **Preference Selector:** Mood‑based radio cards with large, expressive icons; sliders for temperature/lighting with live preview visualisation  
+- **Checkout:** Summary card with room + food breakdown, glassmorphism receipt, Stripe Payment Element embedded seamlessly
+
+---
+
+## 5. Information Architecture & User Flows
+
+### 5.1. Sitemap (Public)
+
+- `/` – Homepage  
+- `/rooms` – All Rooms  
+- `/rooms/[slug]` – Room Detail  
+- `/about` – About the Hotel  
+- `/contact` – Contact with Google Maps embed  
+- `/booking` – Multi‑step booking flow (protected)  
+- `/booking/confirmation` – Booking success  
+- `/auth/login` – Login / Register  
+- `/profile` – User profile & booking history  
+
+### 5.2. Booking Flow (The “Smart Stay” Journey)
+
+```mermaid
+graph TD
+  A[Homepage] --> B[Select Dates & Guests]
+  B --> C[Browse & Select Room]
+  C --> D[Add Food & Beverage]
+  D --> E[Personalise Stay]
+  E --> F[Review & Pay]
+  F --> G[Confirmation + Email]
+  G --> H[Admin Dashboard Updated]
+```
+
+**Flow Details (Mobile‑optimised):**
+
+1. **Dates & Guests:** Horizontal date picker (like Calendly), guest counter with chips  
+2. **Room Selection:** Real‑time availability check from Supabase; if sold out, waitlist option (email me when available)  
+3. **Food Ordering:** After room selected, modal/bottom sheet “Enhance Your Stay with In‑Room Dining”. Categories as chips, items listed with Quick Add (+1). Delivery time picker (at check‑in / schedule). Cart always visible as floating button.  
+4. **Customise Your Stay:** Series of elegant cards – “How would you like to feel?” (Mood: Romantic/Work/Relax → autofills some presets). Then sliders for AC, lighting, music genre. Optional special occasion input (birthday/anniversary).  
+5. **Checkout & Payment:** Combined invoice. Stripe payment sheet. Option to save card for future.  
+6. **Confirmation:** Animated celebration screen, booking ID (QR code), option to add to calendar.
+
+---
+
+## 6. Database Schema (Supabase PostgreSQL)
+
+*All tables in `public` schema, Row Level Security (RLS) enabled where noted.*
+
+### 6.1. Tables & Relationships
+
+```sql
+-- Enable UUID extension
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- Users (extends Supabase auth.users)
+CREATE TABLE profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  full_name TEXT,
+  phone TEXT,
+  avatar_url TEXT,
+  preferences JSONB DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Rooms
+CREATE TABLE rooms (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  slug TEXT UNIQUE NOT NULL,
+  name TEXT NOT NULL,
+  category TEXT CHECK (category IN ('standard', 'deluxe', 'suite')) NOT NULL,
+  description TEXT,
+  base_price DECIMAL(10,2) NOT NULL, -- per night
+  capacity INT DEFAULT 2,
+  amenities JSONB, -- ["WiFi", "Mini Bar", ...]
+  images TEXT[] DEFAULT ARRAY[]::TEXT[], -- array of Supabase Storage paths
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Bookings
+CREATE TABLE bookings (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users(id) NOT NULL,
+  room_id UUID REFERENCES rooms(id) NOT NULL,
+  check_in DATE NOT NULL,
+  check_out DATE NOT NULL,
+  guests INT DEFAULT 1,
+  status TEXT CHECK (status IN ('confirmed', 'cancelled', 'completed')) DEFAULT 'confirmed',
+  total_amount DECIMAL(10,2),
+  payment_intent_id TEXT, -- Stripe PaymentIntent
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Food Orders (linked to a booking)
+CREATE TABLE food_orders (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  booking_id UUID REFERENCES bookings(id) ON DELETE CASCADE NOT NULL,
+  delivery_time TEXT CHECK (delivery_time IN ('at_checkin', 'scheduled')),
+  scheduled_time TIME, -- only if scheduled
+  status TEXT CHECK (status IN ('preparing', 'delivered')) DEFAULT 'preparing',
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Food Order Items (line items)
+CREATE TABLE food_order_items (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  food_order_id UUID REFERENCES food_orders(id) ON DELETE CASCADE NOT NULL,
+  menu_item_id UUID REFERENCES menu_items(id) NOT NULL,
+  quantity INT DEFAULT 1,
+  price DECIMAL(10,2) -- snapshot of price at time of order
+);
+
+-- Menu Items (global hotel menu)
+CREATE TABLE menu_items (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  category TEXT CHECK (category IN ('meal', 'snack', 'drink')) NOT NULL,
+  description TEXT,
+  price DECIMAL(10,2) NOT NULL,
+  image TEXT, -- Supabase storage path
+  is_available BOOLEAN DEFAULT true
+);
+
+-- Stay Preferences (1:1 with booking)
+CREATE TABLE stay_preferences (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  booking_id UUID REFERENCES bookings(id) ON DELETE CASCADE UNIQUE NOT NULL,
+  mood TEXT CHECK (mood IN ('romantic', 'work', 'relax')),
+  ac_temperature INT CHECK (ac_temperature BETWEEN 16 AND 30),
+  lighting TEXT CHECK (lighting IN ('dim', 'bright', 'warm', 'cool')),
+  music_genre TEXT CHECK (music_genre IN ('jazz', 'classical', 'ambient', 'pop', 'none')),
+  occasion TEXT,  -- e.g., 'birthday', 'anniversary'
+  special_requests TEXT
+);
+
+-- Wishlist (BONUS)
+CREATE TABLE wishlists (
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  room_id UUID REFERENCES rooms(id) ON DELETE CASCADE,
+  added_at TIMESTAMPTZ DEFAULT NOW(),
+  PRIMARY KEY (user_id, room_id)
+);
+```
+
+**RLS Policies (Examples):**
+
+- Profiles: users can read/update their own row.  
+- Bookings: users can see own bookings; admin (role) can see all.  
+- Food orders: linked via booking, inherits booking visibility.
+
+---
+
+## 7. API Design (Next.js Route Handlers + Server Actions)
+
+**Authentication:** All booking routes require valid Supabase session (checked via `createRouteHandlerClient`).
+
+### 7.1. Endpoints
+
+| Method | Route | Description | Auth |
+|--------|-------|-------------|------|
+| GET | `/api/rooms` | List rooms, optional date range for availability | Public |
+| GET | `/api/rooms/[slug]` | Room details + availability for given dates | Public |
+| POST | `/api/bookings` | Create booking (room, dates, guests) → returns booking ID | User |
+| POST | `/api/bookings/[id]/food` | Attach food order to booking | User |
+| POST | `/api/bookings/[id]/preferences` | Save stay preferences | User |
+| POST | `/api/create-payment-intent` | Stripe PaymentIntent creation | User |
+| POST | `/api/webhooks/stripe` | Stripe webhook (payment success/failure) | Public (signature) |
+| GET | `/api/admin/bookings` | All bookings with status (admin only) | Admin |
+| PATCH | `/api/admin/bookings/[id]` | Update booking/food/preferences status | Admin |
+| GET | `/api/admin/analytics` | Revenue, occupancy stats | Admin |
+
+**Server Actions (for forms):**
+
+- `bookRoom()` – server action that checks availability atomically and inserts booking.  
+- `addFoodToBooking()` – upserts food order items.  
+- `savePreferences()` – inserts/updates stay_preferences.
+
+All server actions use Supabase `service_role` key for RLS bypass where needed, ensuring safe server‑side operations.
+
+---
+
+## 8. Key Features & Implementation Details
+
+### 8.1. Real‑time Room Availability
+
+- On room selection, a server action queries `bookings` for overlapping dates: `(check_in < requested_checkout AND check_out > requested_checkin)` and status ‘confirmed’. Rooms with zero conflicts are available.  
+- Results cached briefly with Supabase real‑time subscription to invalidate when a new booking is made.
+
+### 8.2. Food Ordering with Combined Billing
+
+- Food order items are stored with their price at the time of ordering (snapshot).  
+- At checkout, a Stripe PaymentIntent is created for `room_total + food_total`.  
+- Admin can mark food as “delivered” via dashboard; guest receives email notification.
+
+### 8.3. Smart Stay Personalisation Engine
+
+- **Mood Presets:**  
+  - Romantic → dim warm light, 24°C AC, jazz music  
+  - Work → bright cool light, 22°C AC, ambient instrumental  
+  - Relax → warm dim light, 25°C AC, soft pop  
+- User can override individual sliders after selecting a mood.  
+- Preferences are displayed on admin dashboard 24h before check‑in so staff can prepare the room.
+
+### 8.4. Admin Dashboard
+
+- Protected route `/admin`; requires `is_admin` claim in JWT (set via Supabase custom claim or metadata).  
+- Tabs: **Bookings**, **Food Orders**, **Room Readiness**, **Analytics**.  
+- Uses Supabase Realtime to show live updates (e.g., new food order appears instantly).  
+- Booking detail view shows guest preferences, food items, and status timelines.
+
+### 8.5. Notifications
+
+- **Booking Confirmation:** Email with summary, booking ID, QR code for check‑in.  
+- **Food Status Change:** Email (and optional SMS) when food status changes to “preparing” / “delivered”.  
+- **Pre‑Arrival Reminder:** 24h before check‑in, reminder email with weather forecast and custom preferences.
+
+---
+
+## 9. UI/UX Master Plan (Detailed Wireframes & Interaction Patterns)
+
+### 9.1. Homepage (Mobile)
+
+- **Hero:** 16:9 image of hotel’s best suite. Overlay a floating glassmorphism card containing:  
+  - Date range picker (two tappable fields opening bottom sheet calendar)  
+  - Guest counter (plus/minus buttons)  
+  - “Check Availability” button – full‑width, gold gradient, raised shadow  
+- **Scrolling:** Reveal “Why LuxStay” cards with subtle parallax. Lottie‑animated icons.  
+- **Footer:** Quick links, social proof carousel (“Rated 9.8 by guests”).
+
+### 9.2. Room Selection Screen
+
+- Top: Sticky header with date/guest summary (editable)  
+- Horizontal scrollable room cards (mobile) – each card has a glass background, image, name, price/night, and a heart (wishlist). Tap heart to save, tap card to expand details (bottom sheet).  
+- “Select Room” CTA in bottom bar fixed.
+
+### 9.3. Food Order Step
+
+- After room selection, a modal slides up: “Enhance Your Stay”.  
+- Category tabs (Meals, Snacks, Drinks) with smooth transition.  
+- Each item: thumbnail, name, price, plus/minus stepper.  
+- Cart icon with badge floats at bottom‑right. Tap to review cart, then “Add to Booking”.  
+- Delivery time selector: two large radio cards – “At Check‑in” (clock icon) / “Schedule” (calendar icon). If scheduled, time picker appears.
+
+### 9.4. Personalisation Panel
+
+- Stepper transitions to a full‑screen “Customise Your Stay” carousel.  
+- **Step 1: Mood** – 3 large cards with descriptive icons and subtle glow effects. Selecting one triggers a haptic pulse and transitions to next.  
+- **Step 2: Sensors** – Temperature slider (animated thermometer), Lighting selector (sun ↔ moon scale), Music genre chips.  
+- **Step 3: Occasion** (optional) – Toggle “Celebrating something?” → text field for birthday/anniversary.  
+- On mobile, all steps are inline scrollable; on desktop, side‑by‑side with progress bar.
+
+### 9.5. Checkout & Receipt
+
+- Glassmorphism receipt with line‑item breakdown:  
+  - Room: name, dates, price × nights  
+  - Food: each item with qty + price  
+  - Subtotal, Tax, Total  
+- Stripe Payment Element rendered in a <div> that inherits the dark theme seamlessly.  
+- After payment, success view: Animated confetti, booking ID with QR code, button to download PDF invoice.
+
+---
+
+## 10. Performance & Optimisation Strategy
+
+- **SSR / ISR:** Room pages statically generated, revalidated every 60s (or on‑demand via webhook when inventory changes).  
+- **Image Optimisation:** Next.js `<Image>` with `unoptimized` for Supabase Storage URLs? Better to use Supabase Image Transformation (if enabled) with `?width=...` parameters. Alternatively, use Next.js custom loader to fetch from Supabase and cache.  
+- **Lazy Loading:** All images below fold use `loading="lazy"`, Framer Motion `LazyMotion` for code splitting of animations.  
+- **Code Splitting:** Dynamic imports for admin dashboard and heavy libraries.  
+- **Mobile‑first CSS:** Tailwind’s responsive utilities with `sm:`, `md:`, `lg:` prefixes ensuring no desktop‑only bloat.  
+- **Caching:** Supabase `@supabase/ssr` for server‑side queries, client‑side caching with SWR for frequently fetched data.
+
+---
+
+## 11. Security Requirements
+
+- **Authentication:** Supabase Auth with Google OAuth + email. JWT stored in secure httpOnly cookie (via Supabase SSR helpers).  
+- **Row Level Security:** All tables have RLS policies ensuring users only access their own data; admins use a separate Supabase client with `service_role` for server‑side data fetching.  
+- **Input Validation:** Zod schemas on all API endpoints and server actions.  
+- **Rate Limiting:** Upstash Redis‑based rate limiter on booking/payment routes (Next.js middleware).  
+- **Stripe Webhook Signature Verification:** Stripe SDK verifies `stripe-signature` header.  
+- **API Protection:** CORS restricted to the hotel’s domain. All mutations need valid session + CSRF (Next.js built‑in).
+
+---
+
+## 12. Project Folder Structure
+
+```
+luxstay-nexus/
+├── public/
+│   ├── images/
+│   └── lottie/
+├── src/
+│   ├── app/                    # Next.js App Router
+│   │   ├── (public)/
+│   │   │   ├── page.tsx        # Homepage
+│   │   │   ├── rooms/
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── [slug]/
+│   │   │   │       └── page.tsx
+│   │   │   ├── about/page.tsx
+│   │   │   └── contact/page.tsx
+│   │   ├── (auth)/
+│   │   │   ├── login/page.tsx
+│   │   │   └── register/page.tsx
+│   │   ├── (booking)/
+│   │   │   ├── booking/page.tsx        # Multi-step booking flow
+│   │   │   └── confirmation/page.tsx
+│   │   ├── (admin)/
+│   │   │   ├── layout.tsx
+│   │   │   ├── dashboard/page.tsx
+│   │   │   ├── bookings/page.tsx
+│   │   │   ├── food-orders/page.tsx
+│   │   │   └── analytics/page.tsx
+│   │   ├── api/
+│   │   │   ├── rooms/
+│   │   │   ├── bookings/
+│   │   │   ├── payment/
+│   │   │   ├── admin/
+│   │   │   └── webhooks/
+│   │   ├── layout.tsx
+│   │   └── globals.css
+│   ├── components/
+│   │   ├── ui/                # Shadcn/ui primitives
+│   │   ├── booking/           # DatePicker, GuestCounter, RoomCard, etc.
+│   │   ├── food/              # MenuCategory, FoodItem, Cart
+│   │   ├── preferences/       # MoodSelector, TemperatureSlider, etc.
+│   │   ├── layout/            # Navbar, Footer, GlassContainer
+│   │   └── animations/        # Framer Motion variants, Lottie players
+│   ├── lib/
+│   │   ├── supabase/          # Client, server, admin clients
+│   ├── hooks/                 # useAuth, useBooking, useFoodOrder
+│   ├── store/                 # Zustand for client state (cart, booking flow)
+│   ├── utils/
+│   └── types/
+├── prisma/                    # (Not used; schema managed via Supabase)
+├── supabase/
+│   ├── migrations/            # SQL migration files
+│   └── seed.sql
+├── .env.local
+├── tailwind.config.ts
+├── next.config.js
+└── package.json
+```
+
+---
+
+## 13. Development & Deployment Plan
+
+**Phase 1: Foundation (Week 1-2)**  
+- Set up Next.js project with Tailwind, Framer Motion, Shadcn/ui  
+- Configure Supabase project (tables, RLS, Storage bucket)  
+- Implement auth flows (Google OAuth, protected routes)  
+- Build layout components, design system tokens
+
+**Phase 2: Core Booking (Week 3-4)**  
+- Room listing & detail pages with real‑time availability  
+- Multi‑step booking flow (dates, guests, room selection)  
+- Payment integration (Stripe Checkout)  
+- Booking confirmation & email (Resend)
+
+**Phase 3: Food & Personalisation (Week 5-6)**  
+- Food menu UI, cart, attach to booking  
+- Stay preferences wizard  
+- Admin dashboard – bookings, food orders, preferences  
+- Real‑time updates with Supabase Realtime
+
+**Phase 4: Polish & Launch (Week 7-8)**  
+- Performance optimisation (lazy loading, caching)  
+- Mobile‑first QA, accessibility audit  
+- PWA setup, offline fallback  
+- Deployment to Vercel (frontend), Supabase Cloud (backend)  
+- DNS, environment variables, monitoring
+
+**Deployment Guide:**
+
+1. Push code to GitHub, connect Vercel, set environment variables (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, etc.).  
+2. Run Supabase migrations via CLI or Dashboard SQL editor.  
+3. Set up Supabase Auth redirect URLs (production domain).  
+4. Configure Stripe webhook endpoint pointing to `/api/webhooks/stripe`.  
+5. Enable Supabase Realtime for `bookings`, `food_orders` tables.  
+6. Optional: Use Supabase Edge Functions for sending SMS (Twilio) after food status change.
+
+---
+
+## 14. Success Metrics
+
+- **UI/UX:** >90 Lighthouse performance, 100% mobile responsive, <3s first contentful paint.  
+- **User Engagement:** Booking completion rate > 60%, food add‑on rate > 40%.  
+- **Business:** Direct bookings increase, staff preparation time reduced (measured by admin dashboard metrics).  
+- **Security:** No SQL injection, all PII encrypted, Stripe PCI‑DSS compliant.
+
+---
+
+## 15. Conclusion
+
+The **LuxStay Nexus** PRD outlines a cutting‑edge, emotionally intelligent hotel booking platform that redefines the guest journey. By combining a visually breathtaking, mobile‑first interface with Supabase’s scalable backend, the platform delivers a true “smart stay” experience — where every preference is remembered, every meal is anticipated, and every booking feels like returning home. This PRD serves as the definitive blueprint for design and development teams to build a market‑leading, one‑hotel digital experience.
