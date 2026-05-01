@@ -2,13 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "export",
-  basePath: "/hotel",
-  assetPrefix: "/hotel/",
+  basePath: "/hotel_",
   images: {
     unoptimized: true,
-  },
-  turbopack: {
-    root: ".",
   },
 };
 
