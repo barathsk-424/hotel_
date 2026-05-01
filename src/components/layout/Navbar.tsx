@@ -49,9 +49,12 @@ export default function Navbar() {
           <Link href="/login" className="text-sm font-medium text-white/70 hover:text-white transition-colors">
             Login
           </Link>
-          <button className="btn-gold !px-5 !py-2 !text-xs uppercase tracking-widest whitespace-nowrap">
+          <Link 
+            href="/suites" 
+            className="btn-gold !px-5 !py-2 !text-xs uppercase tracking-widest whitespace-nowrap"
+          >
             Book Now
-          </button>
+          </Link>
         </div>
       </div>
     </motion.nav>

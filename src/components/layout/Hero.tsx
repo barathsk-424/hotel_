@@ -2,6 +2,9 @@
 
 import { motion } from 'framer-motion'
 import Image from 'next/image'
+import Link from 'next/link'
+
+import heroImg from '../../../public/hero.png'
 
 export default function Hero() {
   return (
@@ -14,7 +17,7 @@ export default function Hero() {
         className="absolute inset-0 z-0"
       >
         <Image 
-          src="/hero.png" 
+          src={heroImg} 
           alt="Luxury Hotel Hero" 
           fill 
           className="object-cover brightness-50"
@@ -45,13 +48,19 @@ export default function Hero() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <button className="btn-gold group relative overflow-hidden px-8 py-4 rounded-full min-w-[220px]">
+            <Link 
+              href="/suites" 
+              className="btn-gold group relative overflow-hidden px-8 py-4 rounded-full min-w-[220px]"
+            >
               <span className="relative z-10">Reserve Your Experience</span>
               <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-            </button>
-            <button className="glass px-8 py-4 rounded-full text-white font-semibold hover:bg-white/10 transition-colors min-w-[220px]">
+            </Link>
+            <Link 
+              href="/suites" 
+              className="glass px-8 py-4 rounded-full text-white font-semibold hover:bg-white/10 transition-colors min-w-[220px] text-center"
+            >
               Explore the Suites
-            </button>
+            </Link>
           </div>
         </motion.div>
       </div>
