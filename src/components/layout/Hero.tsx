@@ -5,15 +5,16 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import heroImg from '../../../public/hero.png'
+import BookingWidget from '../booking/BookingWidget'
 
 export default function Hero() {
   return (
-    <section className="relative h-screen w-full overflow-hidden flex items-center justify-center">
+    <section id="home" className="relative min-h-screen w-full overflow-hidden flex flex-col items-center justify-center pt-20">
       {/* Background Image with Parallax */}
       <motion.div 
-        initial={{ scale: 1.1 }}
+        initial={{ scale: 1.15 }}
         animate={{ scale: 1 }}
-        transition={{ duration: 20, repeat: Infinity, repeatType: 'reverse' }}
+        transition={{ duration: 15, ease: "easeOut" }}
         className="absolute inset-0 z-0"
       >
         <Image 
@@ -27,53 +28,49 @@ export default function Hero() {
 
       {/* Glassmorphism Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background z-1" />
+      <div className="absolute inset-0 bg-white/40 opacity-0 light:opacity-100 transition-opacity duration-500 z-1" />
 
       {/* Content */}
-      <div className="relative z-10 max-w-5xl px-6 text-center">
+      <div className="relative z-10 w-full max-w-7xl px-6 text-center">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <h2 className="text-accent font-playfair text-xl tracking-widest uppercase mb-4">
-            Welcome to the Future of Hospitality
-          </h2>
-          <h1 className="text-5xl md:text-7xl font-playfair font-bold text-white mb-10 leading-[1.1] tracking-tight">
-            Design Your <br className="hidden md:block" />
-            <span className="text-gold">Private Sanctuary</span>
-          </h1>
-          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
-            LuxStay Nexus merges hyper-personalized comfort with emotionally intelligent design. 
-            Control your mood, your scent, and your stay.
-          </p>
+          <motion.h2 
+            initial={{ opacity: 0, letterSpacing: '0.5em' }}
+            animate={{ opacity: 1, letterSpacing: '0.3em' }}
+            transition={{ duration: 1, delay: 0.3 }}
+            className="text-accent font-playfair text-sm md:text-base tracking-[0.3em] uppercase mb-6"
+          >
+            Indulge in Timeless Luxury
+          </motion.h2>
           
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <Link 
-              href="/suites" 
-              className="btn-gold group relative overflow-hidden px-8 py-4 rounded-full min-w-[220px]"
-            >
-              <span className="relative z-10">Reserve Your Experience</span>
-              <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-            </Link>
-            <Link 
-              href="/suites" 
-              className="glass px-8 py-4 rounded-full text-white font-semibold hover:bg-white/10 transition-colors min-w-[220px] text-center"
-            >
-              Explore the Suites
-            </Link>
-          </div>
+          <h1 className="text-5xl md:text-8xl font-playfair font-bold text-white mb-8 leading-[1.1] tracking-tight">
+            Elevate Your <br className="hidden md:block" />
+            <span className="text-gold">Stay to Art</span>
+          </h1>
+          
+          <p className="text-white/80 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed font-light">
+            Experience LuxStay Nexus—where every detail is curated to resonate with your soul. 
+            Hyper-personalized service meets legendary hospitality.
+          </p>
         </motion.div>
+
+        {/* Booking Widget */}
+        <BookingWidget />
       </div>
 
-      {/* Floating Indicators */}
+      {/* Floating Scroll Indicator */}
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        transition={{ delay: 2, duration: 1 }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 group cursor-pointer"
+        onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
       >
-        <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Scroll to explore</span>
-        <div className="w-px h-12 bg-gradient-to-b from-accent to-transparent" />
+        <span className="text-[10px] uppercase tracking-[0.4em] text-white/50 group-hover:text-accent transition-colors">Scroll to explore</span>
+        <div className="w-px h-16 bg-gradient-to-b from-accent to-transparent group-hover:h-20 transition-all duration-500" />
       </motion.div>
     </section>
   )
