@@ -17,18 +17,18 @@ export default function BookingWidget() {
   const checkOutRef = useRef<HTMLInputElement>(null)
 
   const handleDateClick = (ref: React.RefObject<HTMLInputElement | null>) => {
-    if (ref.current) {
-      // Modern browsers support showPicker()
+    const el: any = ref.current
+    if (el) {
       try {
-        if ('showPicker' in ref.current) {
-          ref.current.showPicker()
+        if (el.showPicker) {
+          el.showPicker()
         } else {
-          ref.current.focus()
-          ref.current.click()
+          el.focus()
+          el.click()
         }
       } catch (e) {
-        ref.current.focus()
-        ref.current.click()
+        el.focus()
+        el.click()
       }
     }
   }
