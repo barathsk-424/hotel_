@@ -4,13 +4,14 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { useState } from 'react'
 import { Maximize2, PlayCircle } from 'lucide-react'
+import { assetPath } from '@/lib/assets'
 
 const images = [
-  { id: 1, src: '/hero.png', title: 'Grand Lobby', size: 'large' },
-  { id: 2, src: '/zen.png', title: 'Wellness Spa', size: 'small' },
-  { id: 3, src: '/executive.png', title: 'Infinity Pool', size: 'small' },
-  { id: 4, src: '/penthouse.png', title: 'Sky Lounge', size: 'medium' },
-  { id: 5, src: '/hero.png', title: 'Culinary Studio', size: 'medium' },
+  { id: 1, src: assetPath('/hero.png'), title: 'Grand Lobby', size: 'large' },
+  { id: 2, src: assetPath('/zen.png'), title: 'Wellness Spa', size: 'small' },
+  { id: 3, src: assetPath('/executive.png'), title: 'Infinity Pool', size: 'small' },
+  { id: 4, src: assetPath('/penthouse.png'), title: 'Sky Lounge', size: 'medium' },
+  { id: 5, src: assetPath('/hero.png'), title: 'Culinary Studio', size: 'medium' },
 ]
 
 export default function GallerySection() {

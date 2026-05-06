@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { Utensils, Wine, Coffee, Clock } from 'lucide-react'
 import Link from 'next/link'
+import { assetPath } from '@/lib/assets'
 
 const menuItems = [
   { name: 'Oyster Imperial', price: '3,500', desc: 'Fresh Atlantic oysters, gold leaf, caviar', icon: <Wine /> },
@@ -24,7 +25,7 @@ export default function DiningSection() {
             className="relative h-[700px] rounded-[3rem] overflow-hidden group"
           >
             <Image 
-              src="/hero.png" 
+              src={assetPath('/hero.png')} 
               alt="Fine Dining" 
               fill 
               className="object-cover transition-transform duration-1000 group-hover:scale-105" 

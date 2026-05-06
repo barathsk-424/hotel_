@@ -5,13 +5,14 @@ import Image from 'next/image'
 import { Wifi, Tv, Wind, Coffee, Star, ArrowRight, X, Maximize2, ShieldCheck, Waves } from 'lucide-react'
 import { useState } from 'react'
 import Link from 'next/link'
+import { assetPath } from '@/lib/assets'
 
 const rooms = [
   {
     id: 1,
     name: 'Presidential Zenith Suite',
     price: '95,000',
-    image: '/penthouse.png',
+    image: assetPath('/penthouse.png'),
     features: ['Panoramic View', 'Private Butler', 'Smart Control'],
     rating: 4.9,
     category: 'Luxury',
@@ -22,7 +23,7 @@ const rooms = [
     id: 2,
     name: 'Executive Garden Villa',
     price: '65,000',
-    image: '/executive.png',
+    image: assetPath('/executive.png'),
     features: ['Private Pool', 'Garden Access', 'Outdoor Shower'],
     rating: 4.8,
     category: 'Villa',
@@ -33,7 +34,7 @@ const rooms = [
     id: 3,
     name: 'Zen Harmony Room',
     price: '35,000',
-    image: '/zen.png',
+    image: assetPath('/zen.png'),
     features: ['Minimalist Design', 'Tea Station', 'Yoga Mat'],
     rating: 4.7,
     category: 'Boutique',
